@@ -22,6 +22,18 @@ puzzle = [
     [0, 0, 0, 0, 9, 0, 7, 6, 0],
 ]
 
+puzzle1 = [
+    [0, 5, 3, 2, 0, 0, 4, 0, 8],
+    [0, 0, 0, 0, 0, 0, 0, 9, 0],
+    [0, 0, 0, 6, 0, 0, 0, 0, 7],
+    [0, 0, 0, 8, 0, 3, 0, 0, 0],
+    [0, 0, 2, 0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 0, 6, 4, 9, 0, 0],
+    [6, 0, 0, 0, 0, 5, 0, 7, 2],
+    [0, 0, 5, 0, 0, 0, 0, 0, 0],
+    [0, 7, 0, 0, 0, 0, 8, 0, 3]
+]
+
 
 # checks if v is not in the specified row
 def check_horizontal(y, v, grid):
@@ -63,7 +75,7 @@ def find_empty(grid):
 
 
 # solve the puzzle
-def solve(grid):
+def solver(grid):
     empty = find_empty(grid)
     # base case
     if not empty:
@@ -75,7 +87,7 @@ def solve(grid):
         if check_valid(x, y, v, grid):
             grid[y][x] = v
 
-            if solve(grid):
+            if solver(grid):
                 return True
 
             grid[y][x] = 0
@@ -97,7 +109,12 @@ def print_puzzle(grid):
     print(output)
 
 
-print_puzzle(puzzle)
-print("---------------------\n")
-solve(puzzle)
-print_puzzle(puzzle)
+# print and solve puzzle
+def solve(grid):
+    print_puzzle(grid)
+    print("---------------------\n")
+    solver(grid)
+    print_puzzle(grid)
+
+
+solve(puzzle1)
