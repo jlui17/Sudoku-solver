@@ -12,47 +12,47 @@ puzzle = [
 
 
 # checks if v is not in the specified row
-def check_horizontal(y, v):
+def check_horizontal(y, v, grid):
     for x in range(9):
-        if v == puzzle[y][x]:
+        if v == grid[y][x]:
             return False
     return True
 
 
 # checks if v is not in the specified column
-def check_vertical(x, v):
+def check_vertical(x, v, grid):
     for y in range(9):
-        if v == puzzle[y][x]:
+        if v == grid[y][x]:
             return False
     return True
 
 
 # checks if v is not in the specified square
-def check_square(top_left_x, top_left_y, v):
+def check_square(top_left_x, top_left_y, v, grid):
     for offset_y in range(3):
         for offset_x in range(3):
-            if v == puzzle[top_left_y + offset_y][top_left_x + offset_x]:
+            if v == grid[top_left_y + offset_y][top_left_x + offset_x]:
                 return False
     return True
 
 
 # checks if we can put v into that spot in the puzzle
-def check_valid(x, y, v):
+def check_valid(x, y, v, grid):
     top_left_x, top_left_y = x//3*3, y//3*3
-    return check_horizontal(y, v) and check_vertical(x, v) and check_square(top_left_x, top_left_y, v)
+    return check_horizontal(y, v, grid) and check_vertical(x, v, grid) and check_square(top_left_x, top_left_y, v, grid)
 
 
 # find empty spot
-def find_empty():
+def find_empty(grid):
     for y in range(9):
         for x in range(9):
-            if puzzle[y][x] == 0:
+            if grid[y][x] == 0:
                 return y, x
 
 
 # solve the puzzle
-def solve():
-    empty = find_empty()
+def solve(grid):
+    empty = find_empty(grid)
     # base case
     if not empty:
         return True
@@ -60,13 +60,13 @@ def solve():
         y, x = empty
 
     for v in range(1, 10):
-        if check_valid(x, y, v):
-            puzzle[y][x] = v
+        if check_valid(x, y, v, grid):
+            grid[y][x] = v
 
-            if solve():
+            if solve(grid):
                 return True
 
-            puzzle[y][x] = 0
+            grid[y][x] = 0
 
     return False
 
@@ -83,5 +83,5 @@ def print_puzzle(grid):
 
 print_puzzle(puzzle)
 print("\n------------------------------")
-solve()
+solve(puzzle)
 print_puzzle(puzzle)
