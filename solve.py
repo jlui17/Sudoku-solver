@@ -1,3 +1,15 @@
+empty_puzzle = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0]
+]
+
 puzzle = [
     [0, 0, 0, 7, 0, 4, 0, 0, 0],
     [7, 0, 1, 0, 0, 0, 3, 0, 0],
@@ -75,13 +87,17 @@ def solve(grid):
 def print_puzzle(grid):
     output = ""
     for i in range(9):
+        if i % 3 == 0 and not i == 0:
+            output += "---------------------\n"
         for j in range(9):
+            if j % 3 == 0 and not j == 0:
+                output += "| "
             output += (str(grid[i][j]) + " ")
         output += "\n"
     print(output)
 
 
 print_puzzle(puzzle)
-print("\n------------------------------")
+print("---------------------\n")
 solve(puzzle)
 print_puzzle(puzzle)
