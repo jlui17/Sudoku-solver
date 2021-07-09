@@ -8,6 +8,6 @@ Uses backtracking search to solve any Sudoku puzzle!
 3. Input a sudoku puzzle into the grid.
 4. Press enter to solve!
 
-Algorithms: Recursive Backtracking Search
-Tools: Pygame
-Language: Python3
+Algorithms: Recursive Backtracking Search  
+Tools: Pygame  
+Language: Python3  
