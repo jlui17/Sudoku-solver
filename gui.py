@@ -16,6 +16,18 @@ class Grid:
         [0, 0, 0, 0, 0, 0, 0, 0, 0]
     ]
 
+    board_og = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ]
+
     def __init__(self, rows, cols, width, height):
         self.rows = rows
         self.cols = cols
@@ -50,6 +62,11 @@ class Grid:
             for j in range(self.cols):
                 self.cubes[i][j].draw(win)
 
+        for i in range(9):
+            for j in range(9):
+                if self.board_og[i][j] != 0:
+                    self.cubes[i][j].draw_red(win)
+
     def select(self, row, col):
         # Reset all other
         for i in range(self.rows):
@@ -64,6 +81,7 @@ class Grid:
             for j in range(len(self.cubes)):
                 self.cubes[i][j].set(0)
                 self.board[i][j] = 0
+                self.board_og[i][j] = 0
 
     def click(self, pos):
         """
@@ -107,7 +125,7 @@ class Cube:
         y = self.row * gap
 
         if self.value == 0:
-            text = fnt.render("", 1, (128,128,128))
+            text = fnt.render("", 1, (0,0,0))
             win.blit(text, (x+5, y+5))
         elif self.value != 0:
             text = fnt.render(str(self.value), 1, (0, 0, 0))
@@ -116,19 +134,50 @@ class Cube:
         if self.selected:
             pygame.draw.rect(win, (255,0,0), (x,y, gap ,gap), 3)
 
+    def draw_red(self, win):
+        fnt = pygame.font.SysFont("comicsans", 40)
+
+        gap = self.width / 9
+        x = self.col * gap
+        y = self.row * gap
+
+        if self.value != 0:
+            text = fnt.render(str(self.value), 1, (255, 0, 0))
+            win.blit(text, (x + (gap / 2 - text.get_width() / 2), y + (gap / 2 - text.get_height() / 2)))
+
     def set(self, val):
         self.value = val
 
 
 def redraw_window(win, board):
     win.fill((255,255,255))
+    # display controls
+    fnt = pygame.font.SysFont("comicsans", 35)
+    text = fnt.render("Controls:", 1, (0, 0, 0))
+    win.blit(text, (20, 550))
+
+    fnt = pygame.font.SysFont("comicsans", 20)
+    text = fnt.render("Select - LEFT CLICK or ARROW KEYS", 1, (0, 0, 0))
+    win.blit(text, (40, 580))
+
+    text = fnt.render("Input Num - NUMBER KEY", 1, (0, 0, 0))
+    win.blit(text, (40, 600))
+
+    text = fnt.render("Delete - BACKSPACE", 1, (0, 0, 0))
+    win.blit(text, (40, 620))
+
+    text = fnt.render("Clear - C", 1, (0, 0, 0))
+    win.blit(text, (40, 640))
+
+    text = fnt.render("Solve - ENTER", 1, (0, 0, 0))
+    win.blit(text, (40, 660))
     # Draw grid and board
     board.draw(win)
 
 
 def main():
-    win = pygame.display.set_mode((540,600))
-    pygame.display.set_caption("Sudoku")
+    win = pygame.display.set_mode((540,680))
+    pygame.display.set_caption("Sudoku Solver")
     board = Grid(9, 9, 540, 540)
     run = True
     while run:
@@ -137,7 +186,11 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.KEYDOWN:
-                i, j = board.selected
+                if not board.selected:
+                    board.select(0,0)
+                else:
+                    i, j = board.selected
+
                 if event.key == pygame.K_1 and (i or i ==0):
                     board.cubes[i][j].set(1)
                     board.place(board.cubes[i][j].value)
@@ -168,15 +221,35 @@ def main():
                 if event.key == pygame.K_BACKSPACE:
                     board.place(board.cubes[i][j].blank)
                     board.board[i][j] = 0
+                    board.board_og[i][j] = 0
                 if event.key == pygame.K_c:
                     board.clear()
                 if event.key == pygame.K_RETURN:
+                    # keep track of original puzzle
+                    for i in range(9):
+                        for j in range(9):
+                            board.board_og[i][j] = board.board[i][j]
                     solver = solve.Solver(board.board)
                     solver.solve(solver.puzzle)
                     solved = solver.puzzle
                     for i in range(9):
                         for j in range(9):
                             board.cubes[i][j].set(solved[i][j])
+
+                if event.key == pygame.K_UP:
+                    if board.selected[0] > 0:
+                        board.select(board.selected[0] - 1, board.selected[1])
+                if event.key == pygame.K_DOWN:
+                    if board.selected[0] < 8:
+                        board.select(board.selected[0] + 1, board.selected[1])
+                if event.key == pygame.K_RIGHT:
+                    if board.selected:
+                        if board.selected[1] < 8:
+                            board.select(board.selected[0], board.selected[1] + 1)
+                if event.key == pygame.K_LEFT:
+                    if board.selected:
+                        if board.selected[1] > 0:
+                            board.select(board.selected[0], board.selected[1] - 1)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
@@ -188,5 +261,6 @@ def main():
         pygame.display.update()
 
 
-main()
+if __name__ == "__main__":
+    main()
 pygame.quit()
